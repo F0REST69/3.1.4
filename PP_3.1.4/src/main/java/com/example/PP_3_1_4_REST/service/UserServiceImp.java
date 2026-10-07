@@ -14,19 +14,21 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional
 public class UserServiceImp implements UserService {
 
     private final UserDaoImp userRepository;
     private final PasswordEncoder bCryptPasswordEncoder;
 
-    public UserServiceImp(UserDaoImp userRepository, PasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImp(UserDaoImp userRepository,
+                          PasswordEncoder bCryptPasswordEncoder) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username)
+            throws UsernameNotFoundException {
+
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
@@ -37,21 +39,19 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
-    @Transactional(readOnly = true)
     public User findUserById(long userId) {
         return userRepository.findById(userId).orElse(null);
     }
 
-
     @Override
-    @Transactional(readOnly = true)
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
     @Override
+    @Transactional
     public void updateUser(User user) {
-        if(user != null) {
+        if (user != null) {
             if (!user.getPassword().equals(findUserById(user.getId()).getPassword())) {
                 user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
             }
@@ -60,12 +60,14 @@ public class UserServiceImp implements UserService {
     }
 
     @Override
+    @Transactional
     public void saveUser(User user) {
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
     @Override
+    @Transactional
     public void deleteUser(long userId) {
         if (userRepository.findById(userId).isPresent()) {
             userRepository.deleteById(userId);
