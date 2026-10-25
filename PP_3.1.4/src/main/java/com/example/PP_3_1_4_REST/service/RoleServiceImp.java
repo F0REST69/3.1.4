@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
-@Transactional
 public class RoleServiceImp implements RoleService {
     private final RoleDaoImp roleRepository;
 
@@ -16,6 +15,7 @@ public class RoleServiceImp implements RoleService {
     }
 
     @Override
+    @Transactional
     public void addRole(Role role) {
         roleRepository.save(role);
     }
